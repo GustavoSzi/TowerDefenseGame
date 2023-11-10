@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEditor.SceneManagement;
 
 [ExecuteAlways]
 public class CoordinateLabel : MonoBehaviour
@@ -19,7 +20,7 @@ public class CoordinateLabel : MonoBehaviour
 
     private void Update()
     {
-        if (!Application.isPlaying)
+        if (!Application.isPlaying && PrefabStageUtility.GetCurrentPrefabStage() == null)
         {
             label.enabled = true;
             ShowCoords();
