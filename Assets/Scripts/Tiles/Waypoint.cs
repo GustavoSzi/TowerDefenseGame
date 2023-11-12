@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Waypoint : MonoBehaviour
 {
@@ -10,6 +10,19 @@ public class Waypoint : MonoBehaviour
 
     [SerializeField]
     private bool isPlaceable = true;
+
+    private GameObject placedTower = null;
+
+    private TowersManager towersManager;
+
+    private float gridSnapModifier = 1f;
+
+    private void Start()
+    {
+        gridSnapModifier = UnityEditor.EditorSnapSettings.scale;
+
+        towersManager = TowersManager.instance;
+    }
 
     private void OnMouseOver()
     {
@@ -29,6 +42,32 @@ public class Waypoint : MonoBehaviour
     {
         if (!isPlaceable) return;
 
-        Debug.Log(transform.name);
+        if(Input.GetMouseButtonDown(0))
+        {
+            PlaceTower();
+        } 
+        else if(Input.GetMouseButtonDown(1))
+        {
+            DestroyTower();
+        }
+    }
+
+    private void PlaceTower()
+    {
+        Vector3 targetPosition = transform.position;
+        targetPosition.y += gridSnapModifier;
+
+        if (towersManager.selectedTower != null && placedTower == null)
+        {
+            Instantiate(towersManager.selectedTower, targetPosition, Quaternion.identity, transform);
+            placedTower = towersManager.selectedTower;
+        }
+    }
+
+    private void DestroyTower()
+    {
+        Debug.Log("Destroy");
+        Destroy(placedTower);
+        placedTower = null;
     }
 }
