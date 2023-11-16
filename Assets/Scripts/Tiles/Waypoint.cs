@@ -10,9 +10,9 @@ public class Waypoint : MonoBehaviour
 
     [SerializeField]
     private bool isPlaceable = true;
+    public bool IsPlaceable { get { return isPlaceable; } }
 
     private GameObject placedTower = null;
-
     private TowersManager towersManager;
 
     private float gridSnapModifier = 1f;

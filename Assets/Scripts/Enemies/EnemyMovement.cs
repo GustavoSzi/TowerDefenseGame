@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
+    private PlayerManager playerManager;
+
     [SerializeField]
     private List<Waypoint> path = new List<Waypoint>();
 
@@ -11,13 +13,33 @@ public class EnemyMovement : MonoBehaviour
     [Range(0f, 5f)]
     private float speedMultiplier = 1f;
 
+    [SerializeField]
+    private int damage = 1;
+
     private float gridSnapModifier = 1f;
+
+    private void Awake()
+    {
+        playerManager = PlayerManager.instance;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        FindPath();
+
         gridSnapModifier = UnityEditor.EditorSnapSettings.scale;
         StartCoroutine(LoopThroughPath());
+    }
+
+    void FindPath()
+    {
+        path.Clear();
+        GameObject waypoints = GameObject.FindGameObjectWithTag("Path");
+        foreach (Transform child in waypoints.transform)
+        {
+            path.Add(child.GetComponent<Waypoint>());
+        }
     }
 
     IEnumerator LoopThroughPath()
@@ -37,8 +59,10 @@ public class EnemyMovement : MonoBehaviour
                 movementMultiplier += Time.deltaTime * speedMultiplier;
                 transform.position = Vector3.Lerp(position, newPosition, movementMultiplier);
                 yield return new WaitForEndOfFrame();
-
             }
         }
+
+        playerManager.SubtractHealthPoints(damage);
+        Destroy(gameObject);
     }
 }
